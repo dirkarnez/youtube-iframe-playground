@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+    <script>
+        const PROGRAMMING = "Programming";
+        const ART = "Art";
+        
+        const yamlFileBookA = 
+`name: "Clean Code: A Handbook of Agile Software Craftsmanship"
+types:
+- ${PROGRAMMING}
+`;
+
+const yamlFileBookB = 
+`name: "Drawing Cartoons & Comics for Dummies"
+types:
+- ${ART}
+`;
+
+const yamlFileBookC = 
+`name: "Processing 2: Creative Programming Cookbook: Over 90 highly-effective recipes to unleash your creativity"
+types:
+- ${PROGRAMMING}
+- ${ART}
+`;
+        const indexed = [ 
+            yamlFileBookA, 
+            yamlFileBookB,
+            yamlFileBookC
+        ].reduce((prev, current) => {
+            const currentBook = jsyaml.load(current);
+            const currentBookTypes = currentBook["types"];
+
+            if (!Array.isArray(currentBookTypes)) {
+                return {};
+            }
+
+            let updated = {...prev };
+
+            currentBookTypes.forEach(currentBookType => {
+                if (!updated[currentBookType]) {
+                    updated = {...updated, [currentBookType]: [ currentBook["name"] ]}
+                } else {
+                    updated = {...updated, [currentBookType]: [...updated[currentBookType], currentBook["name"] ]}
+                }
+            });
+
+            return updated;
+        }, {});
+        
+        console.table(indexed);
+        console.table(indexed[ART]);
+    </script>
+</body>
+</html>
